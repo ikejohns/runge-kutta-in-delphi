@@ -30,6 +30,7 @@ type
     procedure eulerMethod();
     procedure midpointMethod();
     procedure heunMethod();
+    procedure ralstonMethod();
     procedure RKThirdOrderMethod();
     procedure RKFourthOrderMethod();
     procedure RKSixthOrderMethod();
@@ -184,6 +185,28 @@ begin
   end;
 end;
 
+procedure TForm1.ralstonMethod();
+var
+  i: Integer;
+  x_before, k1 , k2: Extended;
+  ralston_result: array of Extended;
+begin
+  Series3.Clear;
+  SetLength(ralston_result, step_max);
+  x_before := x0;
+  ralston_result[0] := y0;
+  Series3.AddXY(x_before, ralston_result[0]);
+
+  for i := 1 to step_max - 1 do
+  begin
+    k1 := first_f(x_before, ralston_result[i-1]);
+    k2 := first_f(x_before + 0.75 * step_size, ralston_result[i-1] + 0.75 * k1 * step_size);
+    ralston_result[i] := ralston_result[i-1] + (k1/3 + 2* k2/3) * step_size;
+    x_before := x_before + step_size;
+    Series3.AddXY(x_before, ralston_result[i]);
+  end;
+end;
+
 procedure TForm1.RKThirdOrderMethod();
 var
   i: Integer;
@@ -274,6 +297,7 @@ begin
   eulerMethod();
   midpointMethod();
   heunMethod();
+  ralstonMethod();
   RKThirdOrderMethod();
   RKFourthOrderMethod();
   RKSixthOrderMethod();
